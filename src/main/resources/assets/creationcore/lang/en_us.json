@@ -1,0 +1,24 @@
+{
+  "item.creationcore.blank_matter": "Blank Matter",
+  "item.creationcore.base_matter": "Base Matter",
+  "item.creationcore.creative_matter": "Creative Matter",
+  "item.creationcore.creative_core": "Creative Core",
+  "item.creationcore.void_bucket": "\"Empty\" Bucket",
+  "item.creationcore.bottled_nothing": "Bottled \" \"",
+  "block.creationcore.base_matter": "Base Matter",
+  "block.creationcore.creative_crafting_table": "Creative Crafting Table",
+  "container.creationcore.creative_crafting_table": "Creative Crafting Table",
+  "entity.creationcore.creative_core": "Creative Core",
+  "item.creationcore.mine_craft": "Mine Craft",
+  "item.creationcore.cave_biome_spawn_egg": "Cave Biome Spawn Egg",
+  "item.creationcore.arid_biome_spawn_egg": "Arid Biome Spawn Egg",
+  "item.creationcore.ocean_biome_spawn_egg": "Ocean Biome Spawn Egg",
+  "item.creationcore.plains_biome_spawn_egg": "Plains Biome Spawn Egg",
+  "item.creationcore.forest_biome_spawn_egg": "Forest Biome Spawn Egg",
+  "item.creationcore.mountain_biome_spawn_egg": "Mountain Biome Spawn Egg",
+  "item.creationcore.wetland_biome_spawn_egg": "Wetland Biome Spawn Egg",
+  "item.creationcore.nether_biome_spawn_egg": "Nether Biome Spawn Egg",
+  "item.creationcore.end_biome_spawn_egg": "End Biome Spawn Egg"
+  ,"item.creationcore.ominous_trial_spawner": "Ominous Trial Spawner"
+  ,"item.creationcore.ominous_vault": "Ominous Vault"
+}

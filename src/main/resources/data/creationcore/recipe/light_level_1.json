@@ -1,0 +1,32 @@
+{
+  "type": "creationcore:creative_crafting",
+  "category": "misc",
+  "pattern": [
+    "AAA",
+    "ABA",
+    "AAA"
+  ],
+  "key": {
+    "A": {
+      "item": "creationcore:bottled_nothing"
+    },
+    "B": {
+      "item": "minecraft:torch"
+    }
+  },
+  "result": {
+    "id": "minecraft:light",
+    "count": 1,
+    "components": {
+      "minecraft:block_state": {
+        "level": "1"
+      }
+    }
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:item_exists",
+      "item": "minecraft:light"
+    }
+  ]
+}

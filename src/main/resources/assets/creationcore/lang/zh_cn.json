@@ -1,0 +1,24 @@
+{
+  "item.creationcore.blank_matter": "空白物质",
+  "item.creationcore.base_matter": "基底物质",
+  "item.creationcore.creative_matter": "创造物质",
+  "item.creationcore.creative_core": "创造核心",
+  "item.creationcore.void_bucket": "“空”桶",
+  "item.creationcore.bottled_nothing": "瓶装“　”",
+  "block.creationcore.base_matter": "基底物质",
+  "block.creationcore.creative_crafting_table": "创造工作台",
+  "container.creationcore.creative_crafting_table": "创造工作台",
+  "entity.creationcore.creative_core": "创造核心",
+  "item.creationcore.mine_craft": "挖掘工艺",
+  "item.creationcore.cave_biome_spawn_egg": "洞穴群系生成蛋",
+  "item.creationcore.arid_biome_spawn_egg": "干旱群系生成蛋",
+  "item.creationcore.ocean_biome_spawn_egg": "海洋群系生成蛋",
+  "item.creationcore.plains_biome_spawn_egg": "平原群系生成蛋",
+  "item.creationcore.forest_biome_spawn_egg": "森林群系生成蛋",
+  "item.creationcore.mountain_biome_spawn_egg": "山地群系生成蛋",
+  "item.creationcore.wetland_biome_spawn_egg": "湿地群系生成蛋",
+  "item.creationcore.nether_biome_spawn_egg": "下界群系生成蛋",
+  "item.creationcore.end_biome_spawn_egg": "末地群系生成蛋"
+  ,"item.creationcore.ominous_trial_spawner": "不祥试炼刷怪笼"
+  ,"item.creationcore.ominous_vault": "不祥宝库"
+}
