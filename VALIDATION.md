@@ -1,5 +1,11 @@
 # v0.2 validation status
 
+## v0.2.0 buildfix1
+
+- Fixed the reported ModRecipes.java compilation error by obtaining the vanilla shaped/shapeless codecs through RecipeSerializer's public codec() and streamCodec() methods instead of accessing serializer implementation fields.
+- Recipe JSON, serializer IDs, JEI integration, gameplay behavior and mod version (0.2.0) are unchanged.
+- This revision has not been compiled or launched here: only Java 17 is installed and Gradle is unavailable. GitHub Actions must confirm the build and produce the installable JAR.
+
 ## Completed here
 
 - `python3 tools/generate_recipes_v02.py`: 262 recipes generated from `docs/recipe_spec.docx`; 140 stonecutting mappings and 27 separately crafted spawn eggs.

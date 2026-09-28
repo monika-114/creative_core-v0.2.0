@@ -23,14 +23,14 @@ public final class ModRecipes {
 
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<CreativeCraftingRecipe>> CREATIVE_CRAFTING_SERIALIZER =
             SERIALIZERS.register("creative_crafting", () -> new RecipeSerializerWrapper<>(
-                    ShapedRecipe.Serializer.CODEC.xmap(CreativeCraftingRecipe::new, r -> (ShapedRecipe) r.delegate()),
-                    ShapedRecipe.Serializer.STREAM_CODEC.map(CreativeCraftingRecipe::new, r -> (ShapedRecipe) r.delegate())
+                    RecipeSerializer.SHAPED_RECIPE.codec().xmap(CreativeCraftingRecipe::new, r -> (ShapedRecipe) r.delegate()),
+                    RecipeSerializer.SHAPED_RECIPE.streamCodec().map(CreativeCraftingRecipe::new, r -> (ShapedRecipe) r.delegate())
             ));
 
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<CreativeCraftingRecipe>> CREATIVE_CRAFTING_SHAPELESS_SERIALIZER =
             SERIALIZERS.register("creative_crafting_shapeless", () -> new RecipeSerializerWrapper<>(
-                    ShapelessRecipe.Serializer.CODEC.xmap(CreativeCraftingRecipe::new, r -> (ShapelessRecipe) r.delegate()),
-                    ShapelessRecipe.Serializer.STREAM_CODEC.map(CreativeCraftingRecipe::new, r -> (ShapelessRecipe) r.delegate())
+                    RecipeSerializer.SHAPELESS_RECIPE.codec().xmap(CreativeCraftingRecipe::new, r -> (ShapelessRecipe) r.delegate()),
+                    RecipeSerializer.SHAPELESS_RECIPE.streamCodec().map(CreativeCraftingRecipe::new, r -> (ShapelessRecipe) r.delegate())
             ));
 
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<VoidBottlingRecipe>> VOID_BOTTLING_SERIALIZER =

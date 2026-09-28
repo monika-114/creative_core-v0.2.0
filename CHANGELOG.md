@@ -1,3 +1,9 @@
+## v0.2.0 buildfix1 - Recipe serializer compile fix
+
+- Use public RecipeSerializer codec()/streamCodec() accessors for creative shaped and shapeless crafting registration.
+- Fixes the reported private ShapelessRecipe.Serializer.CODEC access error.
+- No recipe or gameplay changes. Compilation and in-game validation remain pending.
+
 ## build-fix-15 - Mine Craft generalized hardness / Silk Touch drop resolver
 
 - Mine Craft now treats every block hardness outside the inclusive `[0, 50]` range as hardness `50`; the old hardness `-1`-only special case was removed.
