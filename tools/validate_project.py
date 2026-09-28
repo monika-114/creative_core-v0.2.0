@@ -14,6 +14,9 @@ notes: list[str] = []
 # JSON syntax
 json_files = sorted(RES.rglob("*.json")) + [RES / "pack.mcmeta"]
 for path in json_files:
+    relative = path.relative_to(RES).as_posix()
+    if relative.startswith(('data/', 'assets/')) and not re.fullmatch(r'[a-z0-9_./-]+', relative):
+        errors.append(f"Invalid Minecraft resource path: {relative}")
     try:
         json.loads(path.read_text(encoding="utf-8"))
     except Exception as exc:
@@ -109,8 +112,46 @@ if (RES / "data/creationcore/recipe/cow_spawn_egg.json").exists():
 stonecutting = list((RES / "data/creationcore/recipe/stonecutting").glob("*.json"))
 if len(stonecutting) != 140:
     errors.append(f"Expected 140 biome spawn egg stonecutting mappings, found {len(stonecutting)}")
-if len(list((RES / "data/creationcore/recipe").rglob("*.json"))) != 262:
-    errors.append("v0.2 recipe catalog does not contain 262 entries")
+if len(list((RES / "data/creationcore/recipe").rglob("*.json"))) != 251:
+    errors.append("v0.2 buildfix3 recipe catalog does not contain 251 entries")
+
+recipe_root = RES / 'data/creationcore/recipe'
+for removed in ['dirt_path', 'farmland', 'vault_copper', 'trial_spawner_copper']:
+    if (recipe_root / (removed + '.json')).exists():
+        errors.append(f'Removed recipe still exists: {removed}')
+if list(recipe_root.glob('infested_*_potion.json')):
+    errors.append('Infestation potion recipes must be removed')
+egg_recipes = list(recipe_root.glob('infested_*_egg.json'))
+if len(egg_recipes) != 7:
+    errors.append('Expected seven silverfish-based infested block recipes')
+for path in egg_recipes:
+    recipe = json.loads(path.read_text())
+    if recipe['key'][recipe['pattern'][1][1]].get('item') != 'minecraft:silverfish_spawn_egg' or recipe['result']['count'] != 8:
+        errors.append(f'Incorrect infested block recipe: {path.name}')
+for target in ['vault', 'trial_spawner']:
+    recipe = json.loads((recipe_root / ('ominous_' + target + '.json')).read_text())
+    components = recipe['result']['components']
+    name = components.get('minecraft:item_name')
+    if not isinstance(name, str):
+        errors.append(f'{target}: 1.21.1 item_name must be a JSON text string')
+    elif json.loads(name).get('translate') != 'item.creationcore.ominous_' + target:
+        errors.append(f'{target}: incorrect ominous translation')
+    if components.get('minecraft:block_state', {}).get('ominous') != 'true':
+        errors.append(f'{target}: missing ominous block state')
+
+mine_recipe = json.loads((RES / "data/creationcore/recipe/mine_craft.json").read_text())
+if [x.get('item') for x in mine_recipe['ingredients']].count('creationcore:creative_core') != 1:
+    errors.append('Mine Craft must require one Creative Core')
+disc_recipes = list((RES / 'data/creationcore/recipe').glob('copy_music_disc_*.json'))
+if len(disc_recipes) != 19:
+    errors.append('Expected 19 independent vanilla disc copy recipes')
+for path in disc_recipes:
+    recipe = json.loads(path.read_text())
+    if recipe.get('group') != 'creationcore:disc_copy' or recipe['result']['count'] != 1:
+        errors.append(f'Disc copy must output one copy and return the original: {path.name}')
+    middle = recipe['key'][recipe['pattern'][1][1]]['item']
+    if middle != recipe['result']['id']:
+        errors.append(f'Disc input/output mismatch: {path.name}')
 
 smith = json.loads((RES / "data/creationcore/recipe/creative_crafting_table.json").read_text(encoding="utf-8"))
 if not (smith.get("template", {}).get("item") == "creationcore:creative_core"

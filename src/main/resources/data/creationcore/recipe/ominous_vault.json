@@ -16,9 +16,7 @@
       "minecraft:block_state": {
         "ominous": "true"
       },
-      "minecraft:item_name": {
-        "translate": "item.creationcore.ominous_vault"
-      }
+      "minecraft:item_name": "{\"translate\": \"item.creationcore.ominous_vault\"}"
     }
   },
   "neoforge:conditions": [

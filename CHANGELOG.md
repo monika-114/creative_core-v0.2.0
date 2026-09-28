@@ -1,3 +1,21 @@
+## v0.2.0 buildfix3 - Simplified recipes and ominous outputs
+
+- Removed seven infestation-potion recipes; retained seven silverfish-egg recipes producing eight infested blocks each.
+- Removed farmland and dirt-path recipes.
+- Removed the copper-block/iron-bars alternatives for vault and trial spawner; retained the eight mixed copper-grate recipes with enchanted golden apple / nether star centers.
+- Encode ominous output item names as JSON text strings for Minecraft 1.21.1. Preserve ominous=true and the existing localized names.
+- Updated docs/recipe_spec.docx from the user's revision 3. The catalog now contains 251 recipes.
+- Resource checks passed; compilation and game testing remain pending.
+
+## v0.2.0 buildfix2 - Recipe loading and UI fixes
+
+- Rename all 140 stonecutting resource paths from Chinese biome names to valid ASCII biome IDs; add resource-path validation.
+- Always display all nine input slot backgrounds in the JEI category, centering smaller shaped recipes.
+- Keep 19 independent disc recipes and the documented top-middle Blank Matter position. Output one non-stackable copy and return the original disc, for two total; preserve the original components on both discs.
+- Require one Creative Core in the Mine Craft recipe. Regenerate ore ingredient order from the revised specification; they remain shapeless.
+- Map trimmed crafting-input remainder slots back into the actual 3x3 container to prevent small/offset recipe crashes and incorrect consumption.
+- Static checks passed; Java compilation and in-game testing remain pending.
+
 ## v0.2.0 buildfix1 - Recipe serializer compile fix
 
 - Use public RecipeSerializer codec()/streamCodec() accessors for creative shaped and shapeless crafting registration.

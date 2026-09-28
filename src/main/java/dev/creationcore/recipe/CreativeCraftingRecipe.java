@@ -33,7 +33,19 @@ public final class CreativeCraftingRecipe implements Recipe<CraftingInput> {
 
     @Override
     public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
+        if (isDiscCopy()) {
+            ItemStack output = delegate.getResultItem(registries);
+            for (int slot = 0; slot < input.size(); slot++) {
+                if (input.getItem(slot).is(output.getItem())) {
+                    return input.getItem(slot).copyWithCount(1);
+                }
+            }
+        }
         return delegate.assemble(input, registries);
+    }
+
+    public boolean isDiscCopy() {
+        return "creationcore:disc_copy".equals(delegate.getGroup());
     }
 
     @Override
@@ -53,7 +65,10 @@ public final class CreativeCraftingRecipe implements Recipe<CraftingInput> {
         boolean farmland = delegate.getResultItem(null).is(Items.FARMLAND);
         for (int slot = 0; slot < input.size(); slot++) {
             ItemStack stack = input.getItem(slot);
-            if ((path && stack.canPerformAction(ItemAbilities.SHOVEL_FLATTEN))
+            if (isDiscCopy() && stack.is(delegate.getResultItem(null).getItem())) {
+                // Discs cannot stack: one new disc is output, the original is returned.
+                remaining.set(slot, stack.copyWithCount(1));
+            } else if ((path && stack.canPerformAction(ItemAbilities.SHOVEL_FLATTEN))
                     || (farmland && stack.canPerformAction(ItemAbilities.HOE_TILL))) {
                 remaining.set(slot, stack.copyWithCount(1));
             } else if (stack.is(Items.POTION)) {

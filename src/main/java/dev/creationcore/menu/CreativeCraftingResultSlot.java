@@ -50,10 +50,20 @@ public final class CreativeCraftingResultSlot extends ResultSlot {
 
         checkTakeAchievements(craftedStack);
         NonNullList<ItemStack> remaining = creativeRecipe.get().value().getRemainingItems(input);
-
-        for (int slot = 0; slot < craftSlots.getContainerSize(); slot++) {
+        // CraftingInput is trimmed to its occupied bounding rectangle.
+        // Map its remainder indices back into the actual 3x3 container.
+        int left = 3;
+        int top = 3;
+        for (int index = 0; index < craftSlots.getContainerSize(); index++) {
+            if (!craftSlots.getItem(index).isEmpty()) {
+                left = Math.min(left, index % 3);
+                top = Math.min(top, index / 3);
+            }
+        }
+        for (int inputSlot = 0; inputSlot < input.size(); inputSlot++) {
+            int slot = left + inputSlot % input.width() + (top + inputSlot / input.width()) * 3;
             ItemStack ingredient = craftSlots.getItem(slot);
-            ItemStack remainder = remaining.get(slot);
+            ItemStack remainder = remaining.get(inputSlot);
 
             if (!ingredient.isEmpty()) {
                 craftSlots.removeItem(slot, 1);

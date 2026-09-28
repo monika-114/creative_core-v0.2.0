@@ -19,8 +19,9 @@
   },
   "result": {
     "id": "minecraft:music_disc_strad",
-    "count": 2
+    "count": 1
   },
+  "group": "creationcore:disc_copy",
   "neoforge:conditions": [
     {
       "type": "neoforge:item_exists",

@@ -52,24 +52,40 @@ public final class CreativeCraftingJeiCategory implements IRecipeCategory<Creati
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, CreativeCraftingRecipe recipe, IFocusGroup focuses) {
         int width = 3;
+        int height = 3;
+        int offsetX = 0;
+        int offsetY = 0;
         if (recipe.delegate() instanceof ShapedRecipe shaped) {
             width = shaped.getWidth();
+            height = shaped.getHeight();
+            offsetX = (3 - width) / 2;
+            offsetY = (3 - height) / 2;
         }
-        int slot = 0;
-        for (Ingredient ingredient : recipe.getIngredients()) {
-            if (!ingredient.isEmpty()) {
-                builder.addSlot(RecipeIngredientRole.INPUT, 1 + (slot % width) * 18, 1 + (slot / width) * 18)
-                        .setStandardSlotBackground()
-                        .addItemStacks(Arrays.asList(ingredient.getItems()));
+        var ingredients = recipe.getIngredients();
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 3; col++) {
+                var slot = builder.addSlot(RecipeIngredientRole.INPUT, 1 + col * 18, 1 + row * 18)
+                        .setStandardSlotBackground();
+                int x = col - offsetX;
+                int y = row - offsetY;
+                if (x >= 0 && x < width && y >= 0 && y < height) {
+                    int index = y * width + x;
+                    if (index < ingredients.size() && !ingredients.get(index).isEmpty()) {
+                        slot.addItemStacks(Arrays.asList(ingredients.get(index).getItems()));
+                    }
+                }
             }
-            slot++;
         }
         var level = Minecraft.getInstance().level;
         if (level != null) {
             ItemStack result = recipe.getResultItem(level.registryAccess());
-            builder.addSlot(RecipeIngredientRole.OUTPUT, 95, 19)
+            var output = builder.addSlot(RecipeIngredientRole.OUTPUT, 95, 19)
                     .setOutputSlotBackground()
                     .addItemStack(result);
+            if (recipe.isDiscCopy()) {
+                output.addTooltipCallback((view, tooltip) -> tooltip.add(
+                        Component.translatable("jei.creationcore.disc_copy_remainder")));
+            }
         }
     }
 }

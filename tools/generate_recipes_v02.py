@@ -13,10 +13,11 @@ RECIPES = ROOT / 'src/main/resources/data/creationcore/recipe'
 TAGS = ROOT / 'src/main/resources/data/creationcore/tags/item'
 RECIPES.mkdir(parents=True, exist_ok=True)
 TAGS.mkdir(parents=True, exist_ok=True)
-for f in RECIPES.glob('*.json'):
+for f in RECIPES.rglob('*.json'):
     f.unlink()
 
 def write(name, data):
+    assert re.fullmatch(r'[a-z0-9_./-]+', name), name
     target = RECIPES / (name + '.json')
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n')
@@ -70,7 +71,7 @@ def result(out, count=1, components=None):
         obj['components'] = components
     return obj
 
-def shape(name, grid, out, count=1, exclusive=True, components=None, extra_conditions=()):
+def shape(name, grid, out, count=1, exclusive=True, components=None, extra_conditions=(), group=None):
     assert len(grid) in (1,2,3)
     assert all(len(row) == len(grid[0]) for row in grid)
     symbols = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -81,6 +82,8 @@ def shape(name, grid, out, count=1, exclusive=True, components=None, extra_condi
     key = {syms[repr(c)]: item(c) for c in distinct}
     data = {'type': 'creationcore:creative_crafting' if exclusive else 'minecraft:crafting_shaped',
             'category': 'misc', 'pattern': pat, 'key': key, 'result': result(out,count,components)}
+    if group:
+        data['group'] = group
     write(name, condition(data, ids_in(grid)|ids_in(out)|set(extra_conditions)))
 
 def shapeless(name, inputs, out, count=1, exclusive=True, components=None, extra_conditions=()):
@@ -120,7 +123,7 @@ shape('blank_matter', [
     ['tinted_glass','tinted_glass','tinted_glass'],
     ['stick',one('bottled_nothing'),'stick'],
     ['tinted_glass','tinted_glass','tinted_glass']],one('blank_matter'))
-shapeless('mine_craft',['netherite_pickaxe','netherite_sword','netherite_axe','netherite_shovel'],one('mine_craft'))
+shapeless('mine_craft',['netherite_pickaxe','netherite_sword','netherite_axe','netherite_shovel',one('creative_core')],one('mine_craft'))
 write('creative_crafting_table',{
     'type':'minecraft:smithing_transform',
     'template':item(one('creative_core')),
@@ -138,25 +141,21 @@ shape('light_level_1',full('torch',BN),'light',components={'minecraft:block_stat
 shapeless('debug_stick',['stick','enchanted_book'],'debug_stick')
 shape('reinforced_deepslate',[['deepslate']*3]*3,'reinforced_deepslate')
 shape('budding_amethyst',[[None,'amethyst_cluster',None],['amethyst_cluster','amethyst_block','amethyst_cluster'],[None,'amethyst_cluster',None]],'budding_amethyst')
-shapeless('dirt_path',[SOILS,'#minecraft:shovels'],'dirt_path')
 shape('end_portal_frame',[['end_stone',None,'end_stone'],['ender_eye','bedrock','ender_eye'],['end_stone']*3],'end_portal_frame')
-shapeless('farmland',[SOILS,'#minecraft:hoes'],'farmland')
 for target, base in [
  ('infested_stone','stone'),('infested_cobblestone','cobblestone'),
  ('infested_stone_bricks','stone_bricks'),('infested_mossy_stone_bricks','mossy_stone_bricks'),
  ('infested_cracked_stone_bricks','cracked_stone_bricks'),
  ('infested_chiseled_stone_bricks','chiseled_stone_bricks'),('infested_deepslate','deepslate')]:
-    for reagent,suffix in [('silverfish_spawn_egg','egg'),(potion('infestation'),'potion')]:
-        shape(target+'_'+suffix,full(reagent,base),target,8)
+    shape(target+'_egg',full('silverfish_spawn_egg',base),target,8)
 shape('spawner',full('nether_star','iron_bars'),'spawner')
 shape('tall_grass',[[ 'bone_meal'],['short_grass']],'tall_grass')
 shape('large_fern',[[ 'bone_meal'],['fern']],'large_fern')
 for target,center in [('trial_spawner','nether_star'),('vault','enchanted_golden_apple')]:
-    shape(target+'_copper',[ [COPPER_BLOCKS]*3, ['iron_bars',center,'iron_bars'], [COPPER_BLOCKS]*3],target)
     shape(target+'_grate',full(center,COPPER_GRATES),target,extra_conditions=('minecraft:copper_grate',))
     shapeless('ominous_'+target,['ominous_bottle',target],target,
               components={'minecraft:block_state':{'ominous':'true'},
-                          'minecraft:item_name':{'translate':'item.creationcore.ominous_'+target}})
+                          'minecraft:item_name':json.dumps({'translate':'item.creationcore.ominous_'+target})})
 
 # Nine biome spawn eggs. Alternates in each slot are intentionally independent.
 for id, surround in {
@@ -183,7 +182,7 @@ for row in egg_table.rows[1:]:
             assert source in BIOMES,(label,source)
             recipe={'type':'minecraft:stonecutting','ingredient':item(biome(source)),
                     'result':{'id':output,'count':1}}
-            write('stonecutting/'+source+'_'+match.group(1),condition(recipe,[output]))
+            write('stonecutting/'+BIOMES[source]+'_'+match.group(1),condition(recipe,[output]))
             map_counts[source]+=1
     else:
         special.append((output,description))
@@ -256,7 +255,7 @@ for disc in discs:
     shape('copy_music_disc_'+disc,[
         ['iron_ingot',one('blank_matter'),'iron_ingot'],
         ['iron_ingot',id,'iron_ingot'],
-        ['iron_ingot']*3],id,2)
+        ['iron_ingot']*3],id,1,group='creationcore:disc_copy')
 shape('elytra',[
     ['phantom_membrane']*3,
     ['phantom_membrane',one('creative_matter'),'phantom_membrane'],
