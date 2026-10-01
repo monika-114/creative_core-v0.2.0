@@ -5,15 +5,19 @@ import dev.creationcore.entity.CreativeCoreEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.ItemEntityRenderer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.world.item.ItemDisplayContext;
+import com.mojang.math.Axis;
 
 public final class CreativeCoreEntityRenderer extends EntityRenderer<CreativeCoreEntity> {
-    private final ItemEntityRenderer delegate;
+    private final ItemRenderer itemRenderer;
 
     public CreativeCoreEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
-        this.delegate = new ItemEntityRenderer(context);
+        this.itemRenderer = context.getItemRenderer();
         this.shadowRadius = 0.15F;
     }
 
@@ -22,12 +26,14 @@ public final class CreativeCoreEntityRenderer extends EntityRenderer<CreativeCor
                        PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
         poseStack.pushPose();
         poseStack.scale(1.35F, 1.35F, 1.35F);
-        delegate.render(entity, entityYaw, partialTick, poseStack, buffer, packedLight);
+        poseStack.mulPose(Axis.YP.rotationDegrees((float) ((entity.motionSeconds(partialTick) * 90.0) % 360.0)));
+        itemRenderer.renderStatic(entity.getItem(), ItemDisplayContext.GROUND, packedLight,
+                OverlayTexture.NO_OVERLAY, poseStack, buffer, entity.level(), entity.getId());
         poseStack.popPose();
     }
 
     @Override
     public ResourceLocation getTextureLocation(CreativeCoreEntity entity) {
-        return delegate.getTextureLocation(entity);
+        return TextureAtlas.LOCATION_BLOCKS;
     }
 }

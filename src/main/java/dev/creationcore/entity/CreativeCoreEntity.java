@@ -8,8 +8,47 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 
 public final class CreativeCoreEntity extends ItemEntity {
+    private static final EntityDataAccessor<Long> MOTION_START = SynchedEntityData.defineId(
+            CreativeCoreEntity.class, EntityDataSerializers.LONG);
+    private double anchorX, anchorY, anchorZ;
+    private boolean anchored;
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(MOTION_START, 0L);
+    }
+
+    public double motionSeconds(float partialTick) {
+        return Math.max(0.0, (level().getGameTime() - entityData.get(MOTION_START) + partialTick) / 20.0);
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putBoolean("CoreAnchored", anchored);
+        tag.putDouble("CoreAnchorX", anchorX);
+        tag.putDouble("CoreAnchorY", anchorY);
+        tag.putDouble("CoreAnchorZ", anchorZ);
+        tag.putLong("CoreMotionStart", entityData.get(MOTION_START));
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        anchored = tag.getBoolean("CoreAnchored");
+        anchorX = tag.getDouble("CoreAnchorX");
+        anchorY = tag.getDouble("CoreAnchorY");
+        anchorZ = tag.getDouble("CoreAnchorZ");
+        entityData.set(MOTION_START, tag.getLong("CoreMotionStart"));
+        initialize();
+    }
     private static final double CONVERSION_RADIUS = 5.0D;
     private static final double CONVERSION_RADIUS_SQR = CONVERSION_RADIUS * CONVERSION_RADIUS;
 
@@ -21,11 +60,17 @@ public final class CreativeCoreEntity extends ItemEntity {
     public CreativeCoreEntity(Level level, double x, double y, double z) {
         this(dev.creationcore.registry.ModEntities.CREATIVE_CORE.get(), level);
         setPos(x, y, z);
+        anchorX = x;
+        anchorY = y - 0.5;
+        anchorZ = z;
+        anchored = true;
+        entityData.set(MOTION_START, level.getGameTime());
         setItem(new ItemStack(ModItems.CREATIVE_CORE.get()));
         initialize();
     }
 
     private void initialize() {
+        noPhysics = true;
         setNoGravity(true);
         setInvulnerable(true);
         setGlowingTag(true);
@@ -36,6 +81,7 @@ public final class CreativeCoreEntity extends ItemEntity {
 
     @Override
     public void tick() {
+        setDeltaMovement(0, 0, 0);
         super.tick();
 
         // The entity form is only a persistent, highlighted world marker. It must not
@@ -48,6 +94,14 @@ public final class CreativeCoreEntity extends ItemEntity {
         setDeltaMovement(0, 0, 0);
 
         if (!level().isClientSide) {
+            if (!anchored) {
+                anchorX = getX();
+                anchorY = getY() - 0.5;
+                anchorZ = getZ();
+                anchored = true;
+                entityData.set(MOTION_START, level().getGameTime());
+            }
+            setPos(anchorX, anchorY + 0.5 * Math.sin(motionSeconds(0) * Math.PI / 3.0) + 0.5, anchorZ);
             boolean playerNearby = !level().getEntitiesOfClass(
                     Player.class,
                     getBoundingBox().inflate(CONVERSION_RADIUS),

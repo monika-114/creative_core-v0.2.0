@@ -1,4 +1,8 @@
 {
+  "jei.creationcore.info.base_matter": "将空白物质投入凋灵诞生时的爆炸范围，使其成为特殊凋灵。击杀后获得1个基底物质。",
+  "jei.creationcore.info.creative_matter": "将基底物质放在末地返回祭坛中心的竖直轴线上，再击杀末影龙。返回传送门生成后，祭坛上方出现1个无初速度、悬浮的创造物质。",
+  "jei.creationcore.info.creative_core": "将内部仅有1个创造物质、没有其他物品的潜影盒投入末地返回传送门。潜影盒被消耗，5秒后在主世界出生点X、Z各±25格范围内出现创造核心。核心旋转并上下浮动；非旁观玩家靠近5格内时转为可拾取的掉落物。",
+  "jei.creationcore.info.void_bucket": "将普通空桶投入虚空，空桶消失后转化为“空”桶并向上返回。返回时可直接拾取；接近记录的返回高度后，用2秒逐渐减速至悬停。",
   "jei.creationcore.disc_copy_remainder": "输出1张副本，并返还原唱片，合计2张",
   "item.creationcore.blank_matter": "空白物质",
   "item.creationcore.base_matter": "基底物质",

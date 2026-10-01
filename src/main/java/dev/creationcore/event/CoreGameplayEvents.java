@@ -13,7 +13,6 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -35,7 +34,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.DecoratedPotBlockEntity;
 import net.minecraft.world.level.block.entity.trialspawner.TrialSpawnerState;
 import net.minecraft.world.level.block.entity.vault.VaultState;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -442,6 +440,9 @@ public final class CoreGameplayEvents {
     @SubscribeEvent
     public static void onLevelTick(LevelTickEvent.Post event) {
         if (!(event.getLevel() instanceof ServerLevel level)) return;
+        if (level.dimension().equals(Level.OVERWORLD)) {
+            dev.creationcore.data.CoreArrivalSavedData.get(level).tick(level);
+        }
         if (!level.dimension().equals(Level.END)) return;
 
         DragonRitualSavedData data = DragonRitualSavedData.get(level);
@@ -458,7 +459,7 @@ public final class CoreGameplayEvents {
         // tile. The result is deliberately weightless so it cannot fall back through the return
         // portal and get teleported to the Overworld spawn before the player sees it.
         BlockPos origin = data.originAt(portal.getY());
-        ItemEntity result = new ItemEntity(level, origin.getX() + 0.5, portal.getY() + 4.5, origin.getZ() + 0.5,
+        ItemEntity result = new ItemEntity(level, origin.getX() + 0.5, portal.getY() + 9.5, origin.getZ() + 0.5,
                 new ItemStack(ModItems.CREATIVE_MATTER.get()));
         result.setNoGravity(true);
         result.setDefaultPickUpDelay();
@@ -475,9 +476,10 @@ public final class CoreGameplayEvents {
         if (!isValidCreativeMatterShulker(item.getItem())) return;
 
         // Cancel the normal item teleport. The entire shulker box (and its one Creative Matter)
-        // is the ritual cost; exactly one persistent Creative Core is created at world spawn.
+        // is the ritual cost; enqueue one persistent, delayed Overworld arrival.
         event.setCanceled(true);
-        spawnCreativeCoreAtWorldSpawn(level.getServer());
+        dev.creationcore.data.CoreArrivalSavedData.get(level.getServer().overworld())
+                .schedule(level.getServer().overworld());
         item.discard();
     }
 
@@ -565,19 +567,31 @@ public final class CoreGameplayEvents {
     }
 
     private static void tickReturningVoidBucket(ItemEntity item, CompoundTag data) {
-        // The ascent itself is intentionally left to vanilla ItemEntity movement/drag, matching
-        // ExecutiveOrders' transmutation feel. We only keep the special item alive below the
-        // world, allow collection during the flight, and stop it when it reaches the remembered
-        // return height. Collision remains completely vanilla.
+        // Keep normal ascent and collisions, then decelerate over the final 40 ticks.
         item.setNoGravity(true);
         item.setNoPickUpDelay();
         item.setUnlimitedLifetime();
 
         double targetY = data.getDouble(VOID_RETURN_Y);
-        if (item.getY() >= targetY - 0.25D) {
+        double remaining = targetY - item.getY();
+        double speed = Math.max(0.0D, item.getDeltaMovement().y);
+        if (!data.contains("creationcore_brake_ticks") && remaining <= speed * 20.5D) {
+            data.putInt("creationcore_brake_ticks", 40);
+        }
+        if (data.contains("creationcore_brake_ticks")) {
+            int ticks = data.getInt("creationcore_brake_ticks");
+            if (ticks > 0) {
+                // Discrete linear deceleration: the remaining velocities sum to remaining.
+                // Vanilla movement still resolves collisions; never teleport through a block.
+                double velocity = Math.max(0.0D, remaining) * 2.0D / (ticks + 1.0D);
+                item.setDeltaMovement(0, velocity, 0);
+                item.hasImpulse = true;
+                data.putInt("creationcore_brake_ticks", ticks - 1);
+                return;
+            }
             data.putBoolean(VOID_RETURNING, false);
-            item.setPos(item.getX(), targetY, item.getZ());
             item.setDeltaMovement(0, 0, 0);
+            item.hasImpulse = true;
         }
     }
 
@@ -619,11 +633,4 @@ public final class CoreGameplayEvents {
         return nonEmpty == 1;
     }
 
-    private static void spawnCreativeCoreAtWorldSpawn(MinecraftServer server) {
-        ServerLevel overworld = server.overworld();
-        BlockPos spawn = overworld.getSharedSpawnPos();
-        int y = overworld.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, spawn.getX(), spawn.getZ());
-        CreativeCoreEntity core = new CreativeCoreEntity(overworld, spawn.getX() + 0.5, y + 2.5, spawn.getZ() + 0.5);
-        overworld.addFreshEntity(core);
-    }
 }

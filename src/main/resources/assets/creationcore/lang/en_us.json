@@ -1,4 +1,8 @@
 {
+  "jei.creationcore.info.base_matter": "Expose Blank Matter to a Wither's birth explosion. Defeat the resulting special Wither to obtain one Base Matter.",
+  "jei.creationcore.info.creative_matter": "Place Base Matter on the End exit fountain's central vertical axis and defeat the dragon. When the exit portal appears, one weightless Creative Matter appears above it with zero initial velocity.",
+  "jei.creationcore.info.creative_core": "Drop a shulker box containing exactly one Creative Matter and nothing else into the End exit portal. The box is consumed. After 5 seconds a rotating, floating Creative Core appears within 25 blocks on each horizontal axis of Overworld spawn. A non-spectator player within 5 blocks converts it to a collectible item.",
+  "jei.creationcore.info.void_bucket": "Drop an ordinary empty bucket into the void. It transforms into a Void Bucket and rises toward its recorded return height, slowing to a hover over the final 2 seconds. It can be collected during the ascent.",
   "jei.creationcore.disc_copy_remainder": "Produces 1 copy and returns the original disc (2 total)",
   "item.creationcore.blank_matter": "Blank Matter",
   "item.creationcore.base_matter": "Base Matter",

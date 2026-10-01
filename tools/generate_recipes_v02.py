@@ -136,6 +136,8 @@ shape('void_bottling',[
     one('bottled_nothing'),3,exclusive=False)
 
 BN=one('bottled_nothing')
+for base in ('sand', 'gravel'):
+    shape('suspicious_'+base,[[None,base,None],[base,'decorated_pot',base],[None,base,None]],'suspicious_'+base,4)
 shape('barrier',full('bedrock',BN),'barrier')
 shape('light_level_1',full('torch',BN),'light',components={'minecraft:block_state':{'level':'1'}})
 shapeless('debug_stick',['stick','enchanted_book'],'debug_stick')

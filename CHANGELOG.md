@@ -1,3 +1,14 @@
+## v0.2.0 buildfix4 - Ritual motion and JEI information
+
+- Add two Creative Crafting recipes: four sand/gravel around a decorated pot yield four suspicious sand/gravel. No archaeology loot is assigned by these recipes.
+- Add localized JEI information pages for Base Matter, Creative Matter, Creative Core and Void Bucket.
+- Decelerate returning void buckets over the final 40 ticks without teleporting through collisions. This is velocity easing, not opacity fading.
+- Raise Creative Matter by another five blocks (portal Y + 9.5) and retain zero initial velocity on all axes.
+- Persist a separate 100-tick arrival for each consumed ritual shulker. Choose independent integer X/Z offsets in [-25,25] around Overworld spawn, excluding the exact central column. Use the local surface height + 2.5 as the starting center.
+- Animate the core at 90 degrees/second and y = blockBottom + 0.5*sin(t*pi/3)+0.5. Save its anchor and start time; synchronize start time to clients. Replace vanilla item bob/spin with explicit rendering.
+- Keep proximity conversion to a collectible item, invulnerability and existing ritual costs.
+- 253 recipes; static/numerical checks passed. Full Java compilation and gameplay verification remain pending.
+
 ## v0.2.0 buildfix3 - Simplified recipes and ominous outputs
 
 - Removed seven infestation-potion recipes; retained seven silverfish-egg recipes producing eight infested blocks each.

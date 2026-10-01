@@ -1,0 +1,27 @@
+{
+  "type": "creationcore:creative_crafting",
+  "category": "misc",
+  "pattern": [
+    " A ",
+    "ABA",
+    " A "
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:gravel"
+    },
+    "B": {
+      "item": "minecraft:decorated_pot"
+    }
+  },
+  "result": {
+    "id": "minecraft:suspicious_gravel",
+    "count": 4
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:item_exists",
+      "item": "minecraft:suspicious_gravel"
+    }
+  ]
+}

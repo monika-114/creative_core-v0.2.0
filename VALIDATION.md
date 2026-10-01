@@ -1,5 +1,13 @@
 # v0.2 validation status
 
+## v0.2.0 buildfix4
+
+253 recipes, 290 JSON/resource files and 20 textures pass static checks. New suspicious-block recipes use decorated_pot (not flower_pot), output four blocks, and do not assign archaeology loot.
+
+Movement uses game ticks at the normal 20 TPS: bucket braking lasts 40 ticks, core arrival waits 100 ticks, bobbing period is 120 ticks and rotation period is 80 ticks. Server lag stretches real-time durations. Bobbing starts at the spawn block center, with range center +/- 0.5 blocks. The surface-height choice remains the previous two-block clearance, now sampled at the randomized X/Z location.
+
+Pending arrivals and core motion anchors are saved. Runtime checks still needed: save/reload during the delay, multiple simultaneous rituals, multiplayer rendering, blocked bucket ascent, and approaching the core within five blocks. Java 21 and Gradle remain unavailable here; no compiled or game-tested JAR is claimed.
+
 ## v0.2.0 buildfix3
 
 - 251 recipes; 288 JSON/resource files and 20 textures passed static validation.

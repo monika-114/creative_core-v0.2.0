@@ -112,8 +112,8 @@ if (RES / "data/creationcore/recipe/cow_spawn_egg.json").exists():
 stonecutting = list((RES / "data/creationcore/recipe/stonecutting").glob("*.json"))
 if len(stonecutting) != 140:
     errors.append(f"Expected 140 biome spawn egg stonecutting mappings, found {len(stonecutting)}")
-if len(list((RES / "data/creationcore/recipe").rglob("*.json"))) != 251:
-    errors.append("v0.2 buildfix3 recipe catalog does not contain 251 entries")
+if len(list((RES / "data/creationcore/recipe").rglob("*.json"))) != 253:
+    errors.append("v0.2 buildfix4 recipe catalog does not contain 253 entries")
 
 recipe_root = RES / 'data/creationcore/recipe'
 for removed in ['dirt_path', 'farmland', 'vault_copper', 'trial_spawner_copper']:

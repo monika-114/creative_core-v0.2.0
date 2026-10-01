@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.network.chat.Component;
 
 @JeiPlugin
 public final class CreationCoreJeiPlugin implements IModPlugin {
@@ -32,6 +33,14 @@ public final class CreationCoreJeiPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
+        registration.addItemStackInfo(new ItemStack(ModItems.BASE_MATTER.get()),
+                Component.translatable("jei.creationcore.info.base_matter"));
+        registration.addItemStackInfo(new ItemStack(ModItems.CREATIVE_MATTER.get()),
+                Component.translatable("jei.creationcore.info.creative_matter"));
+        registration.addItemStackInfo(new ItemStack(ModItems.CREATIVE_CORE.get()),
+                Component.translatable("jei.creationcore.info.creative_core"));
+        registration.addItemStackInfo(new ItemStack(ModItems.VOID_BUCKET.get()),
+                Component.translatable("jei.creationcore.info.void_bucket"));
         var level = Minecraft.getInstance().level;
         if (level == null) return;
         registration.addRecipes(CRAFTING, level.getRecipeManager()
